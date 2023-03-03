@@ -7,4 +7,10 @@ public with sharing class BoatDataService {
         }
         return boatMap;
     }
+
+    public static List<Boat__c> getBoats(String boatTypeId){
+        List<Boat__c> boats = new List<Boat__c>();
+        boats = [SELECT Id, Name, Price__c, Description__c, Length__c FROM Boat__c where BoatType__c = :boatTypeId WITH SECURITY_ENFORCED];
+        return boats;
+    }
 }
