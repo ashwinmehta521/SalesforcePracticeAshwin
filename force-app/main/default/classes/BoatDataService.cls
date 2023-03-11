@@ -60,8 +60,13 @@ public with sharing class BoatDataService {
         return similarBoats;
     }
 
-    public static List<BoatType__c> getBoatTypes() {
-        return [SELECT Name, Id FROM BoatType__c WITH SECURITY_ENFORCED ORDER BY Name];
+    @AuraEnabled
+    public static List<BoatType__c> getBoatTypes(String selectedBoatTypeId) {
+        if(String.isNotBlank(selectedBoatTypeId)){
+            return [SELECT Name, Id FROM BoatType__c WHERE Id = :selectedBoatTypeId WITH SECURITY_ENFORCED ORDER BY Name];
+        } else {
+            return [SELECT Name, Id FROM BoatType__c WITH SECURITY_ENFORCED ORDER BY Name];
+        }
     }
 
     public static List<BoatReview__c> getAllReviews(Id boatId) {
