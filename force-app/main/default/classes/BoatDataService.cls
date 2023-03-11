@@ -3,7 +3,8 @@ public with sharing class BoatDataService {
     public static final String LENGTH_TYPE = 'Length'; 
     public static final String PRICE_TYPE = 'Price'; 
     public static final String TYPE_TYPE = 'Type'; 
-
+    
+    @AuraEnabled(Cacheable=true)
     public static List<Boat__c> getBoats(String boatTypeId) {
         // Without an explicit boatTypeId, the full list is desired
         String query = 'SELECT '
@@ -60,7 +61,7 @@ public with sharing class BoatDataService {
         return similarBoats;
     }
 
-    @AuraEnabled
+    @AuraEnabled(Cacheable=true)
     public static List<BoatType__c> getBoatTypes(String selectedBoatTypeId) {
         if(String.isNotBlank(selectedBoatTypeId)){
             return [SELECT Name, Id FROM BoatType__c WHERE Id = :selectedBoatTypeId WITH SECURITY_ENFORCED ORDER BY Name];
@@ -92,6 +93,7 @@ public with sharing class BoatDataService {
     }
 
     // Assume this may be an API that return this data, not a SOQL query
+    @AuraEnabled(cacheable=true)
     public static String getBoatsByLocation(Decimal latitude, Decimal longitude, String boatTypeId) {
         // Without an explicit boatTypeId, the full list is desired
         String query = 'SELECT Name, Geolocation__Latitude__s, Geolocation__Longitude__s FROM Boat__c ';
@@ -102,6 +104,7 @@ public with sharing class BoatDataService {
         return JSON.serialize(Database.query(query));
     }
 
+    @AuraEnabled
     public static String updateBoatList(Object data){
         List<Boat__c> boatsForUpdate = (List<Boat__c>) JSON.deserialize(
             JSON.serialize(data),
